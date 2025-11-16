@@ -3,11 +3,15 @@ const User = require('../models/User');
 
 // Generate JWT token
 const generateToken = (userId) => {
-  return jwt.sign(
-    { id: userId },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
-  );
+  const tokenOptions = { id: userId };
+  const jwtOptions = {};
+  
+  // Only add expiresIn if JWT_EXPIRES_IN is not 'never'
+  if (process.env.JWT_EXPIRES_IN && process.env.JWT_EXPIRES_IN !== 'never') {
+    jwtOptions.expiresIn = process.env.JWT_EXPIRES_IN;
+  }
+  
+  return jwt.sign(tokenOptions, process.env.JWT_SECRET, jwtOptions);
 };
 
 // @desc    Register new user
