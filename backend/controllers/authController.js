@@ -21,6 +21,8 @@ const register = async (req, res) => {
   try {
     const { username, email, password, role } = req.body;
 
+    console.log('Register request:', { username, email, role, passwordLength: password?.length });
+
     // Check if user exists
     const existingUserByEmail = await User.findOne({ email });
     if (existingUserByEmail) {
@@ -49,8 +51,12 @@ const register = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Register error:', error);
-    res.status(500).json({ message: 'Server error during registration' });
+    console.error('Registration error:', error);
+    res.status(500).json({ 
+      message: 'Server error during registration',
+      error: error.message,
+      details: error.errors ? Object.values(error.errors).map(e => e.message) : []
+    });
   }
 };
 
